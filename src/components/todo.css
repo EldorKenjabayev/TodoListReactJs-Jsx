@@ -55,3 +55,8 @@ input {
     right: -5px;
     border-radius: 5px;
 }
+
+.todo i {
+    cursor: pointer;
+  }
+  

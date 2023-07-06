@@ -6,6 +6,7 @@ import randomColor from "randomcolor";
 import Button from "@mui/material/Button";
 
 import BasicModal from "./modal/Modal";
+import EditModal from "./modal/EditModal";
 
 export default function Todo() {
   const [name, setName] = useState("");
@@ -28,8 +29,8 @@ export default function Todo() {
           luminosity: "light",
         }),
         position: {
-          x: 200,
-          y: 200,
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
         },
         createdAt: new Date().toLocaleTimeString(),
       };
@@ -58,10 +59,32 @@ export default function Todo() {
     setItems(newArr);
   };
 
+  // edit
+
+  const [open, setOpen] = React.useState(false);
+  const [editTodo, setEditTodo] = useState("");
+  const handleOpen = (item) => {
+    setOpen(true);
+    setEditTodo(item);
+    console.log(item);
+  };
+  // const handleClose = () => {
+  //   setOpen(false);
+  //   addItem();
+  // };
+
   return (
     <div>
       <div className="content">
         <BasicModal addItem={addItem} setName={setName} setTodo={setTodo} />
+        <EditModal
+          open={open}
+          handleOpen={handleOpen}
+          editTodo={editTodo}
+          setOpen={setOpen}
+          items={items}
+          setItems={setItems}
+        />
         {items.map((item, index) => {
           return (
             <Draggable
@@ -71,20 +94,62 @@ export default function Todo() {
                 defPos(data, index);
               }}
             >
-              <div className="todo" style={{ backgroundColor: item.color, padding:"20px 30px" }}>
+              <div
+                className="todo"
+                style={{
+                  backgroundColor: item.color,
+                  padding: "40px 30px   20px 30px",
+                }}
+              >
                 <div>
-                  <h3>Name: {item.name}</h3>
-                  <h3>Surname: {item.todo}</h3>
-                </div> <br />
-
-                <button className="delete"  onClick={() => deleteTodo(item.id)} style={{
-                  position:'absolute',
-                  cursor:'pointer',
-                  top:'10px',
-                  right:'10px'
-                }}>
-                  x
-                </button>
+                  <h3
+                    style={{
+                      position: "absolute",
+                      top: "5px",
+                      fontSize: "17px",
+                    }}
+                  >
+                    {" "}
+                    {item.name}
+                  </h3>
+                  <p>
+                    <span
+                      style={{
+                        fontWeight: "600",
+                      }}
+                    >
+                      Todo:{" "}
+                    </span>
+                    {item.todo}
+                  </p>
+                </div>{" "}
+                <br />
+                <div>
+                  <button
+                    className="delete"
+                    onClick={() => deleteTodo(item.id)}
+                    style={{
+                      position: "absolute",
+                      cursor: "pointer",
+                      top: "10px",
+                      right: "10px",
+                    }}
+                  >
+                    x
+                  </button>
+                  <i
+                    class="bx bx-edit"
+                    style={{
+                      cursor:'pointer', 
+                      position: "absolute",
+                      cursor: "pointer",
+                      top: "8px",
+                      right: "35px",
+                      fontSize: "25px",
+                    }}
+                    onClick={() => handleOpen(item)}
+                  ></i>
+                </div>
                 <div>Yaratilgan vaqt: {item.createdAt}</div>
               </div>
             </Draggable>

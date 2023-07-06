@@ -3,6 +3,10 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
 import TextField from "@mui/material/TextField";
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import Draggable from "react-draggable";
+import randomColor from "randomcolor";
 
 const style = {
   position: "absolute",
@@ -16,17 +20,47 @@ const style = {
   p: 4,
 };
 
-export default function BasicModal({ addItem, setName, setTodo }) {
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
+export default function EditModal({
+  open,
+  editTodo,
+  setOpen,
+  items,
+  setItems,
+}) {
+  const [newTodo, setNewTodo] = useState("");
+  const [newUser, setNewUser] = useState("");
+
   const handleClose = () => {
     setOpen(false);
-    addItem();
+
+    let filtered = items.map((item) => {
+      if (item.id === editTodo.id) {
+        let newItem = {
+          id: item.id,
+          name: newUser !== "" ? newUser : editTodo.name,
+          todo: newTodo !== "" ? newTodo : editTodo.todo,
+          color: item.color,
+          position: item.position,
+          newUser: newUser !== "" ? newUser : editTodo.newUser,
+          createdAt: new Date().toLocaleTimeString(),
+        };
+
+        return newItem;
+      }
+
+      return item;
+    });
+
+    setItems(filtered);
+    setNewTodo("");
+    setNewUser("");
+
+    console.log(filtered);
   };
 
   return (
     <div>
-      <Button onClick={handleOpen}>Open modal</Button>
+      {/* <Button onClick={handleOpen}>Open modal</Button> */}
       <Modal
         open={open}
         onClose={handleClose}
@@ -38,7 +72,7 @@ export default function BasicModal({ addItem, setName, setTodo }) {
             id="standard-basic"
             label="write your name"
             variant="standard"
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setNewUser(e.target.value)}
             sx={{
               width: "430px",
               marginBottom: "20px",
@@ -46,9 +80,10 @@ export default function BasicModal({ addItem, setName, setTodo }) {
           />
           <TextField
             id="standard-basic"
-            label="write your todo"
+            label="todo"
             variant="standard"
-            onChange={(e) => setTodo(e.target.value)}
+            defaultValue={editTodo.todo}
+            onChange={(e) => setNewTodo(e.target.value)}
             sx={{
               width: "430px",
               marginBottom: "20px",
